@@ -26,8 +26,13 @@ def load_model(model_path, data, scale_factor, cuda):
 #		net.load_state_dict(torch.load(model_path, map_location=lambda storage, loc: storage))
 #	else:
 #		net.load_state_dict(torch.load(model_path))
-	net = torch.load(model_path)
-	
+	from functools import partial
+	import pickle
+	pickle.load = partial(pickle.load, encoding="latin1")
+	pickle.Unpickler = partial(pickle.Unpickler, encoding="latin1")
+	net = torch.load(model_path, map_location=lambda storage, loc: storage, pickle_module=pickle)
+#	net = torch.load(model_path)
+
 	transform = ToTensor()
 	ori_tensor = transform(data)
 	if cuda:

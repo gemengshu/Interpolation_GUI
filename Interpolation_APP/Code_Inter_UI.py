@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # NOTIFICATION
-# The model used in this applicaiton is from 
+# The model used in this applicaiton is from
 # https://github.com/pytorch/examples/tree/master/super_resolution
 
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
@@ -79,7 +79,10 @@ class Code_MainWindow(Ui_MainWindow):
         if not self.ori_content:
             raise Exception("No image is selected.")
         self.cuda = self.use_cuda.isChecked()
-        model_path = self.__curdir + '/' + self.modelPath_content + '.pth'
+        if os.name == 'posix':
+            model_path = self.__curdir + '/' + self.modelPath_content + '.pth'
+        else:
+            model_path = self.__curdir + '\\' + self.modelPath_content + '.pth'
 
         result = load_model(model_path, self.ori_content, self.scale_factor, self.cuda)
 
@@ -101,7 +104,7 @@ class Code_MainWindow(Ui_MainWindow):
         self.model_output = QtWidgets.QLabel("Output")
         self.model_output.setScaledContents(True)
         self.__load_model()
-        
+
 
 
     def RevertAll(self):
