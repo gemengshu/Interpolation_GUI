@@ -6,6 +6,7 @@ import torchvision
 import importlib
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from model import Net
+import os
 
 """Model 1 : /home/student/Documents/u-net_pytorch/epochs200_layer3_ori_256/"""
 """Model 2 : /home/student/Documents/u-net-pytorch-original/lr001_weightdecay00001/"""
@@ -26,12 +27,14 @@ def load_model(model_path, data, scale_factor, cuda):
 #		net.load_state_dict(torch.load(model_path, map_location=lambda storage, loc: storage))
 #	else:
 #		net.load_state_dict(torch.load(model_path))
-	from functools import partial
-	import pickle
-	pickle.load = partial(pickle.load, encoding="latin1")
-	pickle.Unpickler = partial(pickle.Unpickler, encoding="latin1")
-	net = torch.load(model_path, map_location=lambda storage, loc: storage, pickle_module=pickle)
-#	net = torch.load(model_path)
+	if os.name == 'posix':
+		net = torch.load(model_path)
+	else:
+		from functools import partial
+		import pickle
+		pickle.load = partial(pickle.load, encoding="latin1")
+		pickle.Unpickler = partial(pickle.Unpickler, encoding="latin1")
+		net = torch.load(model_path, map_location=lambda storage, loc: storage, pickle_module=pickle)
 
 	transform = ToTensor()
 	ori_tensor = transform(data)
